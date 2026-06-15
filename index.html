@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROATELYE — Ручний пошив тренчів, Львів</title>
+<meta name="description" content="Тренчі ручного пошиву в одному екземплярі. Натуральні тканини, індивідуальний розмір. Львів.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBFAF7;
+    --surface: #F1EFE8;
+    --text: #1C1B19;
+    --text-soft: #6B6A64;
+    --border: rgba(28,27,25,0.12);
+    --border-strong: rgba(28,27,25,0.28);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif; color: var(--text);
+    background: var(--bg); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; border-left: 0.5px solid var(--border); border-right: 0.5px solid var(--border); }
+
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 2rem; border-bottom: 0.5px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300; letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .nav-contact {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-soft); cursor: pointer;
+    border-bottom: 0.5px solid var(--border); padding-bottom: 1px;
+    transition: color .2s, border-color .2s; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit;
+  }
+  .nav-contact:hover { color: var(--text); border-color: var(--text); }
+
+  .video-hero {
+    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    overflow: hidden; background: #1c1b19;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .hero-video, .hero-still {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .hero-video { opacity: 0; transition: opacity 0.4s ease; z-index: 3; }
+  .video-hero.playing .hero-video { opacity: 1; }
+  .hero-still { transition: opacity 0.5s ease; }
+  .still-left { z-index: 2; opacity: 1; }
+  .still-right { z-index: 2; opacity: 0; }
+  .video-hero[data-hover="right"] .still-right { opacity: 1; }
+  .video-hero[data-hover="right"] .still-left { opacity: 0; }
+  .video-hero.playing .hero-still { opacity: 0; }
+  .vh-zone {
+    position: absolute; top: 0; height: 100%; width: 50%; z-index: 4; cursor: pointer;
+  }
+  .vh-zone-left { left: 0; }
+  .vh-zone-right { right: 0; }
+  .video-hero.started .vh-zone { pointer-events: none; }
+  .vh-hint {
+    position: absolute; left: 50%; bottom: 1.5rem; transform: translateX(-50%); z-index: 3;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.9); text-shadow: 0 1px 12px rgba(0,0,0,0.5);
+    pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .video-hero.started .vh-hint { opacity: 0; }
+  .vh-reset {
+    position: absolute; left: 1.5rem; bottom: 1.25rem; z-index: 5;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: #fff; background: rgba(0,0,0,0.28); backdrop-filter: blur(4px);
+    border: 0.5px solid rgba(255,255,255,0.4); border-radius: 0;
+    padding: 8px 14px; cursor: pointer; font-family: inherit;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+  }
+  .vh-reset:hover { background: rgba(0,0,0,0.45); }
+  .video-hero.ended .vh-reset { opacity: 1; pointer-events: auto; }
+
+  .intro-band {
+    padding: 3rem 2.5rem; border-bottom: 0.5px solid var(--border);
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;
+    text-align: left;
+  }
+  .intro-band .hero-title { margin: 0.25rem 0 0.5rem; }
+  .hero-label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-soft); }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px; font-weight: 300; line-height: 1.05;
+    letter-spacing: -0.01em; margin: 1.25rem 0;
+  }
+  .hero-title em { font-style: italic; }
+  .hero-desc { font-size: 13px; line-height: 1.7; color: var(--text-soft); max-width: 300px; margin-bottom: 2rem; }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text); cursor: pointer; background: none; border: none;
+    border-bottom: 0.5px solid var(--text); padding-bottom: 3px; width: fit-content;
+    font-family: inherit; transition: opacity .2s;
+  }
+  .hero-cta:hover { opacity: 0.55; }
+  .hero-meta { font-size: 11px; color: var(--text-soft); letter-spacing: 0.04em; }
+
+  .section-label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-soft); padding: 1.5rem 2rem 0; }
+
+  .products { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+  .product-card { border-right: 0.5px solid var(--border); cursor: pointer; transition: background .2s; }
+  .product-card:last-child { border-right: none; }
+  .product-card:hover { background: var(--surface); }
+  .product-image {
+    background: var(--surface); aspect-ratio: 3 / 4;
+    display: block; overflow: hidden;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .product-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+  .product-info { padding: 1.5rem 1.75rem; }
+  .product-name { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; letter-spacing: 0.02em; margin-bottom: 4px; }
+  .product-sub { font-size: 11px; color: var(--text-soft); letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+  .product-price { font-size: 13px; letter-spacing: 0.05em; }
+
+  .details { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+  .detail-block { padding: 2.25rem; border-right: 0.5px solid var(--border); }
+  .detail-block:last-child { border-right: none; }
+  .detail-title { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 1.25rem; }
+  .detail-list { list-style: none; }
+  .detail-list li { font-size: 13px; line-height: 1.8; border-bottom: 0.5px solid var(--border); padding: 8px 0; }
+  .detail-list li:last-child { border-bottom: none; }
+
+  .contact-section { padding: 3.5rem 2rem; text-align: center; }
+  .contact-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 300; margin-bottom: 0.5rem; }
+  .contact-sub { font-size: 12px; color: var(--text-soft); letter-spacing: 0.05em; margin-bottom: 2rem; }
+  .contact-links { display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .contact-link {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text); text-decoration: none; cursor: pointer;
+    border-bottom: 0.5px solid var(--border); padding-bottom: 1px;
+    transition: opacity .2s; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit;
+  }
+  .contact-link:hover { opacity: 0.55; }
+  .contact-divider { width: 1px; height: 14px; background: var(--border-strong); }
+
+  .footer { padding: 1.25rem 2rem; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+  .footer-copy { font-size: 10px; color: var(--text-soft); letter-spacing: 0.05em; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg); width: 480px; max-width: 100%; border: 0.5px solid var(--border-strong); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 0.5px solid var(--border); }
+  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; }
+  .modal-close { cursor: pointer; color: var(--text-soft); font-size: 22px; background: none; border: none; line-height: 1; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 1.75rem; }
+  .modal-body > p { font-size: 13px; line-height: 1.7; color: var(--text-soft); margin-bottom: 1.5rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-soft); display: block; margin-bottom: 6px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; padding: 9px 12px; font-size: 13px;
+    border: 0.5px solid var(--border-strong); background: var(--bg); color: var(--text);
+    font-family: inherit; outline: none; transition: border-color .2s; border-radius: 0;
+  }
+  .form-textarea { height: 80px; resize: none; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--text); }
+  .form-submit {
+    width: 100%; padding: 11px; margin-top: 0.75rem;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    background: var(--text); color: var(--bg); border: none; cursor: pointer;
+    font-family: inherit; transition: opacity .2s;
+  }
+  .form-submit:hover { opacity: 0.78; }
+  .success-msg { display: none; text-align: center; padding: 2.5rem 1.75rem; }
+  .success-msg .s-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; margin-bottom: 8px; }
+  .success-msg .s-text { font-size: 13px; color: var(--text-soft); }
+
+  @media (max-width: 720px) {
+    .wrap { border-left: none; border-right: none; }
+    .products, .details { grid-template-columns: 1fr; }
+    .video-hero { aspect-ratio: 3 / 4; }
+    .intro-band { padding: 2.25rem 1.5rem; }
+    .hero-title { font-size: 38px; }
+    .hero-desc { max-width: 100%; }
+    .product-card { border-right: none; border-bottom: 0.5px solid var(--border); }
+    .product-card:last-child { border-bottom: none; }
+    .detail-block { border-right: none; border-bottom: 0.5px solid var(--border); }
+    .detail-block:last-child { border-bottom: none; }
+    .nav { padding: 1.25rem 1.5rem; }
+    .nav-logo { font-size: 18px; }
+    .contact-section { padding: 2.5rem 1.5rem; }
+    .contact-title { font-size: 28px; }
+    .vh-hint { font-size: 9px; bottom: 1rem; padding: 0 1rem; text-align: center; }
+    .vh-reset { left: 1rem; bottom: 1rem; }
+    .modal { width: 100%; }
+    .modal-body { padding: 1.25rem; }
+  }
+  @media (hover: none) {
+    .hero-still { transition: none; }
+  }
+</style>
+</head>
+<body>
+<!--
+  ФАЙЛИ САЙТУ (мають лежати в одній папці):
+  index.html, hero_left.jpg, hero_right.jpg, videoA_web.mp4, videoB_web.mp4, model1.jpg, model2.jpg
+
+  ШАПКА (наведення + клік):
+  - hero_left.jpg  = кадр де ЛІВА жінка різка (= перший кадр videoA_web.mp4)
+  - hero_right.jpg = кадр де ПРАВА жінка різка (= перший кадр videoB_web.mp4)
+  - Наведення на жінку показує відповідний кадр; клік запускає її відео.
+  - ВАЖЛИВО: перший кадр відео має збігатися з відповідним hero_*.jpg,
+    інакше при кліку буде стрибок.
+  - Відео: MP4 (H.264), без звуку, бажано до ~1 МБ.
+
+  ЯК ЗАМІНИТИ ФОТО КАРТОК:
+  Назви нове фото так само (model1.jpg / model2.jpg) і поклади в папку.
+
+  ЯК ЗАМІНИТИ КОНТАКТИ:
+  Знайди посилання на Instagram і Telegram і встав свої реальні адреси
+  (напр. https://www.instagram.com/proatelye та https://t.me/proatelye).
+-->
+<div class="wrap">
+  <nav class="nav">
+    <span class="nav-logo">PROATELYE</span>
+    <button class="nav-contact" onclick="openContact()">Замовити</button>
+  </nav>
+
+  <div class="video-hero" id="videoHero">
+    <img src="hero_left.jpg" alt="Тренчі PROATELYE" class="hero-still still-left" id="stillLeft">
+    <img src="hero_right.jpg" alt="Тренчі PROATELYE" class="hero-still still-right" id="stillRight">
+    <video class="hero-video" id="heroVideo" playsinline muted preload="auto"></video>
+    <div class="vh-zone vh-zone-left" data-video="videoA_web.mp4" data-end="Classic"></div>
+    <div class="vh-zone vh-zone-right" data-video="videoB_web.mp4" data-end="Oversize"></div>
+    <button class="vh-reset" id="vhReset" type="button" aria-label="Показати обидві моделі">← обидві моделі</button>
+    <div class="vh-hint" id="vhHint">Наведіть, щоб сфокусувати · клік — обрати</div>
+  </div>
+
+  <div class="intro-band">
+    <span class="hero-label">Ручний пошив — Львів</span>
+    <h1 class="hero-title">Тренч, що <em>лишається</em></h1>
+    <p class="hero-desc">Кожен виріб шиється в одному екземплярі. Натуральні тканини, конструктивний крій без зайвого.</p>
+    <button class="hero-cta" onclick="document.getElementById('products').scrollIntoView()">Переглянути колекцію →</button>
+  </div>
+
+  <p class="section-label" id="products">— Моделі</p>
+
+  <div class="products">
+    <div class="product-card" onclick="openOrder('Classic Trench')">
+      <div class="product-image">
+        <img src="model1.jpg" alt="Classic Trench" class="product-photo">
+      </div>
+      <div class="product-info">
+        <p class="product-name">Classic Trench</p>
+        <p class="product-sub">Бежевий · Бавовна 100%</p>
+        <p class="product-price">від 4 500 грн</p>
+      </div>
+    </div>
+    <div class="product-card" onclick="openOrder('Oversize Trench')">
+      <div class="product-image">
+        <img src="model2.jpg" alt="Oversize Trench" class="product-photo">
+      </div>
+      <div class="product-info">
+        <p class="product-name">Oversize Trench</p>
+        <p class="product-sub">Сірий меланж · Вовна/поліестер</p>
+        <p class="product-price">від 5 200 грн</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">— Деталі</p>
+
+  <div class="details">
+    <div class="detail-block">
+      <p class="detail-title">Матеріали</p>
+      <ul class="detail-list">
+        <li>Бавовна 100% — класичний тренч</li>
+        <li>Вовна/поліестер — oversize</li>
+        <li>Підкладка з натурального шовку</li>
+        <li>Фурнітура — метал, латунь</li>
+      </ul>
+    </div>
+    <div class="detail-block">
+      <p class="detail-title">Умови замовлення</p>
+      <ul class="detail-list">
+        <li>Знімаємо мірки особисто або дистанційно</li>
+        <li>Передоплата 50% при підтвердженні</li>
+        <li>Термін виготовлення 3–4 тижні</li>
+        <li>Самовивіз у Львові або Нова Пошта</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="contact-section">
+    <h2 class="contact-title">Маєш питання?</h2>
+    <p class="contact-sub">Пишіть — відповідаємо протягом дня</p>
+    <div class="contact-links">
+      <button class="contact-link" onclick="openContact()">Замовити</button>
+      <div class="contact-divider"></div>
+      <a class="contact-link" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <div class="contact-divider"></div>
+      <a class="contact-link" href="https://telegram.org/" target="_blank" rel="noopener">Telegram</a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-copy">© 2025 PROATELYE — Ручний пошив, Львів</span>
+    <span class="footer-copy">Єдиний екземпляр кожного виробу</span>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Залишити запит</span>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <p>Залиште контакт і модель — ми зв'яжемось для обговорення деталей та зняття мірок.</p>
+      <div class="form-group">
+        <label class="form-label">Ім'я</label>
+        <input class="form-input" type="text" id="f-name" placeholder="Ваше ім'я">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Телефон / Instagram</label>
+        <input class="form-input" type="text" id="f-contact" placeholder="+380 або @username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Модель</label>
+        <select class="form-select" id="f-model">
+          <option>Classic Trench — від 4 500 грн</option>
+          <option>Oversize Trench — від 5 200 грн</option>
+          <option>Не визначились — потрібна консультація</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Коментар</label>
+        <textarea class="form-textarea" id="f-comment" placeholder="Колір, побажання, питання..."></textarea>
+      </div>
+      <button class="form-submit" onclick="submitForm()">Відправити запит</button>
+    </div>
+    <div class="success-msg" id="success-msg">
+      <p class="s-title">Дякуємо</p>
+      <p class="s-text">Зв'яжемось із вами найближчим часом.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function openOrder(model) {
+  var sel = document.getElementById('f-model');
+  sel.value = model === 'Classic Trench'
+    ? 'Classic Trench — від 4 500 грн'
+    : 'Oversize Trench — від 5 200 грн';
+  openContact();
+}
+function openContact() {
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('modal-body').style.display = 'block';
+  document.getElementById('success-msg').style.display = 'none';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+function submitForm() {
+  var name = document.getElementById('f-name').value.trim();
+  var contact = document.getElementById('f-contact').value.trim();
+  if (!name || !contact) { alert('Будь ласка, вкажіть ім\'я та контакт'); return; }
+  document.getElementById('modal-body').style.display = 'none';
+  document.getElementById('success-msg').style.display = 'block';
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+
+(function(){
+  var hero = document.getElementById('videoHero');
+  if(!hero) return;
+  var video = document.getElementById('heroVideo');
+  var zones = hero.querySelectorAll('.vh-zone');
+  var reset = document.getElementById('vhReset');
+  var hint = document.getElementById('vhHint');
+  var current = null;
+  var isTouch = window.matchMedia('(hover: none)').matches;
+  if(isTouch && hint){ hint.textContent = 'Торкніться моделі'; }
+
+  function playScenario(src){
+    hero.classList.add('started');
+    hero.classList.remove('ended');
+    if(current !== src){
+      video.src = src;
+      current = src;
+      video.load();
+    } else {
+      video.currentTime = 0;
+    }
+    var p = video.play();
+    if(p && p.catch){ p.catch(function(){}); }
+  }
+
+  zones.forEach(function(z){
+    var side = z.classList.contains('vh-zone-right') ? 'right' : 'left';
+    z.addEventListener('mouseenter', function(){
+      if(!hero.classList.contains('started')){
+        hero.setAttribute('data-hover', side);
+      }
+    });
+    z.addEventListener('click', function(){
+      playScenario(z.getAttribute('data-video'));
+    });
+  });
+
+  hero.addEventListener('mouseleave', function(){
+    if(!hero.classList.contains('started')){
+      hero.removeAttribute('data-hover');
+    }
+  });
+
+  video.addEventListener('playing', function(){
+    hero.classList.add('playing');
+  });
+  video.addEventListener('ended', function(){
+    hero.classList.add('ended');
+  });
+
+  reset.addEventListener('click', function(){
+    video.pause();
+    hero.classList.remove('playing', 'ended', 'started');
+    hero.removeAttribute('data-hover');
+  });
+})();
+</script>
+</body>
+</html>
